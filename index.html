@@ -1,0 +1,2354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Panel Iboyyy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --blur-strength: 15px;
+      --card-bg: rgba(25, 25, 40, 0.6);
+      --border-color: rgba(255, 255, 255, 0.15);
+      --text-primary: #ffffff;
+      --text-secondary: #c0c0d0;
+      --accent-primary: #6a11cb;
+      --accent-secondary: #2575fc;
+      --error-bg: rgba(255, 50, 50, 0.2);
+      --error-border: #ff6b6b;
+      --error-text: #ffadad;
+      /* Warna Baterai */
+      --battery-full: #38c172; /* Hijau */
+      --battery-med: #ffaa00; /* Kuning/Oranye */
+      --battery-low: #ff6b6b; /* Merah */
+      --battery-border: #c0c0d0;
+      /* Warna Cuaca Baru */
+      --weather-cool: #89b4fa;
+      /* Warna Fitur Berguna */
+      --utility-color: #ffaa00; /* Oranye/Kuning */
+      /* Warna Admin Baru */
+      --admin-color: #6a11cb; /* Warna Ungu */
+      /* Warna Baru untuk Countdown */
+      --countdown-bg: rgba(137, 180, 250, 0.1); 
+      --countdown-border: #89b4fa;
+      --countdown-text: #ffffff;
+    }
+
+    /* Gaya Video Background */
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    /* Kunci CSS agar video background menyesuaikan ukuran dashboard (seluruh viewport) */
+    .video-background video {
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: cover; /* Penting agar video mengisi penuh dan terpusat */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: var(--text-primary);
+      overflow: hidden;
+      box-sizing: border-box;
+      padding-bottom: 0; /* Menghapus padding-bottom karena navbar bawah dihapus */
+    }
+    
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(var(--blur-strength));
+      -webkit-backdrop-filter: blur(var(--blur-strength));
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+      width: 90%;
+      box-sizing: border-box;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      animation: fadeInCard 0.8s ease-out forwards;
+      opacity: 0;
+      transform: translateY(20px);
+      position: relative;
+      max-height: 90vh; /* Sesuaikan tinggi agar tidak terpotong */
+      overflow-y: auto; 
+    }
+
+    @keyframes fadeInCard {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* --- GAYA BARU UNTUK HEADER/MENU ATAS (Diubah untuk Sidebar Toggle) --- */
+    .card-top-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: flex-start; /* Ubah ke flex-start */
+        align-items: center;
+        box-sizing: border-box;
+        border-bottom: 1px solid var(--border-color);
+        background: rgba(25, 25, 40, 0.8);
+        border-radius: 20px 20px 0 0;
+        gap: 15px; /* Tambahkan jarak */
+    }
+
+    .menu-toggle-group {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+    
+    .menu-toggle-group:hover {
+        color: var(--accent-secondary);
+    }
+
+    .menu-toggle-group i {
+        font-size: 24px; /* Ikon Menu lebih besar */
+        margin-right: 0;
+    }
+    
+    .logo-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--accent-secondary);
+        white-space: nowrap;
+    }
+    /* Akhir GAYA HEADER/MENU ATAS */
+
+    /* --- GAYA BARU UNTUK SIDEBAR (NAVIGASI PENUH) START --- */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1500;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -80%; /* Sembunyikan di luar layar */
+        width: 80%;
+        max-width: 300px;
+        height: 100%;
+        background: rgba(18, 18, 28, 0.95); /* Background gelap solid */
+        backdrop-filter: blur(var(--blur-strength));
+        -webkit-backdrop-filter: blur(var(--blur-strength));
+        z-index: 2000;
+        box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+        transition: left 0.3s ease;
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .sidebar.visible {
+        left: 0;
+    }
+    
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px 20px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 20px;
+    }
+    
+    .sidebar-header h3 {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 20px;
+    }
+    
+    .sidebar-close {
+        color: var(--text-secondary);
+        font-size: 24px;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+    .sidebar-close:hover {
+        color: var(--error-border);
+    }
+    
+    .sidebar-menu {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .sidebar-menu a, .sidebar-menu button {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: transparent;
+        border: none;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .sidebar-menu a i, .sidebar-menu button i {
+        width: 25px;
+        text-align: center;
+        margin-right: 15px;
+        font-size: 18px;
+        color: var(--accent-secondary);
+    }
+    
+    /* GAYA KHUSUS UNTUK FITUR BERGUNA */
+    .sidebar-menu a.utility-link i {
+        color: var(--utility-color); /* Warna Oranye */
+    }
+    
+    /* GAYA KHUSUS UNTUK LINK TANPA ICON */
+    .sidebar-menu a.utility-link:not(:has(i)) {
+      /* Adjust padding-left to maintain alignment if there's no icon */
+      padding-left: 20px; 
+      /* Ensures text starts at the same visual point as links with icons */
+    }
+    
+    /* GAYA KHUSUS UNTUK ADMIN MENU */
+    .sidebar-menu a.admin-link i {
+        color: var(--admin-color); /* Warna Ungu */
+    }
+
+    .sidebar-menu a.active, .sidebar-menu a:hover, .sidebar-menu button:hover {
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.08);
+        border-left: 4px solid var(--accent-secondary);
+        padding-left: 16px; /* Kompensasi border */
+    }
+    
+    .sidebar-menu a.utility-link:hover {
+        border-left-color: var(--utility-color);
+    }
+
+    .sidebar-menu a.logout, .sidebar-menu button.logout {
+        color: var(--error-text);
+        margin-top: 15px;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .sidebar-menu a.logout:hover, .sidebar-menu button.logout:hover {
+        background-color: var(--error-bg);
+        border-left-color: var(--error-border);
+    }
+    
+    .sidebar-menu a.logout i, .sidebar-menu button.logout i {
+        color: var(--error-border);
+    }
+    
+    /* Device Info dalam Sidebar */
+    .device-info-sidebar {
+        padding: 10px 20px 20px;
+        border-top: 1px solid var(--border-color);
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+    .device-info-sidebar b {
+        color: var(--accent-secondary);
+    }
+    /* --- GAYA BARU UNTUK SIDEBAR END --- */
+
+
+    /* --- GAYA BARU UNTUK VIDEO LOGO PERSEGI 4 (DIUBAH MENJADI 180PX) --- */
+    .video-logo-container {
+        /* UKURAN VIDEO DIPERBESAR */
+        width: 180px; 
+        height: 180px; 
+        margin: 40px auto 15px auto; /* Margin atas disesuaikan karena header */
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--border-color);
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #card-video {
+        width: 100%; 
+        height: 100%;
+        object-fit: cover; 
+        border-radius: 13px; 
+    }
+    
+    /* Gaya untuk tombol pengatur audio */
+    .audio-toggle-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px 15px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 5px; 
+        margin-bottom: 20px; 
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        width: fit-content; 
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .audio-toggle-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: var(--accent-secondary);
+    }
+    /* AKHIR GAYA VIDEO LOGO */
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .card-header-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    p.sub {
+      margin: 0 0 10px; /* Diperbarui agar lebih dekat dengan status login */
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+    
+    /* GAYA BARU UNTUK USERNAME LOGIN */
+    .logged-in-user {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--battery-full); /* Hijau untuk status login */
+        margin-bottom: 20px;
+        padding: 5px 15px;
+        background: rgba(56, 193, 114, 0.1);
+        border-radius: 8px;
+        border: 1px solid var(--battery-full);
+    }
+    
+    /* --- GAYA BARU UNTUK COUNTDOWN ULANG TAHUN --- */
+    #birthday-countdown {
+        margin-bottom: 20px;
+        padding: 10px 15px;
+        background: var(--countdown-bg);
+        border-radius: 8px;
+        border: 1px solid var(--countdown-border);
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--countdown-text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-align: center;
+    }
+    #birthday-countdown i {
+        color: var(--countdown-border);
+        font-size: 18px;
+    }
+    /* --- AKHIR GAYA COUNTDOWN --- */
+
+
+    label {
+      text-align: left;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    input::placeholder {
+      color: #888;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-secondary);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(37, 117, 252, 0.3);
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23c0c0d0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3Csvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 12px;
+    }
+    
+    select option {
+      background: #1e202b;
+      color: var(--text-primary);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      color: var(--text-primary);
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .secondary-button {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+    
+    .secondary-button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    button:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 20px rgba(69, 97, 252, 0.3);
+    }
+    
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    /* GAYA BARU UNTUK GROUP BUTTON */
+    .button-group {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+    .button-group button {
+        width: 50%;
+        padding: 10px;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    /* Tombol Salin Data BARU */
+    .copy-data-button {
+        background: var(--battery-full);
+        margin-top: 10px;
+    }
+    .copy-data-button:hover {
+        box-shadow: 0 5px 20px rgba(56, 193, 114, 0.3);
+    }
+
+    .step-container {
+      transition: opacity 0.4s ease-out, max-height 0.4s ease-out, transform 0.4s ease-out, padding 0.4s, margin 0.4s;
+      overflow: hidden;
+      transform-origin: top;
+      max-height: 1000px; /* Cukup besar untuk menampung konten */
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .hidden {
+      opacity: 0;
+      max-height: 0;
+      transform: scale(0.95);
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    
+    .step-container.hidden {
+        display: none; /* Tambahkan ini agar tidak mengganggu layout saat hidden */
+    }
+    
+    .step-container:not(.hidden) {
+        display: block;
+    }
+
+    .success-box {
+      text-align: left;
+      background: rgba(37, 117, 252, 0.1);
+      border: 1px solid var(--accent-secondary);
+      border-radius: 10px;
+      padding: 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    
+    .success-box b {
+      color: var(--text-primary);
+      min-width: 80px;
+      display: inline-block;
+    }
+    
+    .success-box a {
+      color: #89b4fa;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .success-box a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-box {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    /* --- Gaya untuk Custom Alert/Peringatan Password --- */
+    .custom-alert {
+      text-align: left;
+      background: rgba(255, 165, 0, 0.1); /* Warna oranye muda */
+      border: 1px solid #ffaa00; /* Border oranye */
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 14px;
+      color: var(--text-secondary); 
+      margin-bottom: 20px;
+      line-height: 1.6;
+      position: relative; 
+    }
+    
+    .custom-alert b {
+      color: var(--text-primary);
+    }
+    
+    .bad-example {
+      color: #ff6b6b; /* Merah untuk contoh salah */
+      font-weight: 600;
+    }
+    
+    .good-example {
+      color: #38c172; /* Hijau untuk contoh benar */
+      font-weight: 600;
+    }
+    
+    /* Gaya untuk tombol tutup (x) */
+    .closebtn {
+      margin-left: 15px;
+      color: var(--text-primary);
+      font-weight: bold;
+      float: right;
+      font-size: 24px;
+      line-height: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    
+    .closebtn:hover {
+      color: var(--accent-secondary);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-top-color: var(--text-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    /* --- Gaya untuk Riwayat Panel (Panel History) --- */
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-height: 300px; /* Batasan tinggi untuk scroll */
+        overflow-y: auto;
+        padding-right: 10px; /* Ruang untuk scrollbar */
+    }
+    
+    .history-item {
+        text-align: left;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+    }
+    
+    .history-item strong {
+        color: var(--accent-secondary);
+        font-weight: 600;
+        display: inline-block;
+        min-width: 85px;
+    }
+    
+    .history-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .history-actions button {
+        padding: 8px 12px;
+        font-size: 14px;
+        width: auto;
+    }
+    
+    /* Tombol Tampilkan Password */
+    .show-password-button {
+        background: var(--accent-secondary);
+        width: 50%;
+    }
+
+    /* Tombol Hapus Server (MODIFIKASI BARU) */
+    .delete-server-button {
+        background: var(--error-border); /* Warna merah */
+        width: 50%; /* Setengah lebar dari container aksi */
+    }
+    
+    /* Tombol Hapus Riwayat */
+    .clear-history-button {
+        background: var(--error-border);
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    /* Tampilan Riwayat Kosong */
+    .empty-history {
+        color: var(--text-secondary);
+        font-style: italic;
+        margin-top: 20px;
+    }
+
+
+    /* --- Gaya untuk Baterai --- */
+    .battery-status {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 5px 10px;
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+      z-index: 10;
+    }
+
+    .battery-icon-container {
+      width: 25px;
+      height: 12px;
+      border: 1.5px solid var(--battery-border);
+      border-radius: 3px;
+      margin-left: 8px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .battery-icon-container:before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      right: -3px;
+      width: 1px;
+      height: 5px;
+      border-radius: 0 1px 1px 0;
+      border: 1px solid var(--battery-border);
+      border-left: none;
+    }
+
+    .battery-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%; /* Diatur oleh JS */
+      transition: width 0.5s ease-in-out, background-color 0.5s ease;
+      border-radius: 1px;
+    }
+
+    .charging-indicator {
+        position: absolute;
+        color: var(--text-primary);
+        font-size: 8px;
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
+
+    .charging-indicator.active {
+        opacity: 1;
+    }
+    
+    /* --- Gaya untuk Info Perangkat (DIPINDAHKAN KE DALAM CARD) --- */
+    .device-details-in-card {
+        text-align: left;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 14px;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        line-height: 1.5;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+    }
+
+    .device-details-in-card.expanded {
+        max-height: 200px; /* Cukup besar untuk konten */
+        padding: 15px;
+    }
+
+    .device-details-in-card b {
+        color: var(--accent-secondary);
+    }
+    
+    /* Gaya untuk Tautan Sosial Media */
+    .social-links {
+        margin-top: 20px; 
+        padding: 10px 0 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        text-align: left;
+    }
+    .social-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.3s ease;
+    }
+    .social-links a:hover {
+      color: var(--accent-secondary);
+    }
+    .social-links a i {
+        font-size: 16px;
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+        color: var(--accent-secondary);
+    }
+    
+    /* --- GAYA BARU UNTUK WAKTU & JARINGAN (TAMBAHAN) --- */
+    #time-network-status {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px; /* Jarak antara Jam dan Jaringan */
+        margin-top: -15px; /* Menaikkan sedikit agar lebih dekat sub-judul */
+        margin-bottom: 20px; /* Jarak dari form/alert */
+        padding: 5px 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+    
+    #time-network-status i {
+        margin-right: 5px;
+        color: var(--accent-secondary);
+    }
+    
+    #current-time {
+        white-space: nowrap; /* Mencegah jam terpotong */
+    }
+    
+    #network-speed {
+        white-space: nowrap; /* Mencegah kecepatan terpotong */
+    }
+    /* --- AKHIR GAYA BARU --- */
+
+    /* --- GAYA UNTUK MODAL KUSTOM BARU (START) --- */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .custom-modal-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .custom-modal {
+        background: var(--card-bg);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        max-width: 350px;
+        width: 90%;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+        border: 1px solid var(--border-color);
+        text-align: left;
+    }
+
+    .custom-modal-overlay.visible .custom-modal {
+        transform: scale(1);
+    }
+    
+    .custom-modal h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+    }
+    
+    .custom-modal h3 i {
+        margin-right: 10px;
+        color: var(--accent-secondary);
+    }
+    
+    /* Warna icon untuk modal alert umum */
+    #alert-modal-title i.fa-check-circle { color: var(--battery-full); }
+    #alert-modal-title i.fa-exclamation-triangle { color: var(--utility-color); }
+    #alert-modal-title i.fa-times-circle { color: var(--error-border); }
+    #alert-modal-title i.fa-info-circle { color: var(--accent-secondary); }
+    
+    /* Warna icon untuk modal konfirmasi */
+    #confirm-modal-title i.fa-sign-out-alt,
+    #confirm-modal-title i.fa-trash,
+    #confirm-modal-title i.fa-user-slash { color: var(--error-border); }
+
+    .custom-modal p {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .custom-modal .input-group {
+        margin-bottom: 20px;
+    }
+    
+    .custom-modal .input-group input {
+        width: 100%;
+        margin-bottom: 0; 
+        padding: 12px;
+    }
+
+    .custom-modal .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+    
+    .custom-modal .modal-actions button {
+        width: auto;
+        flex-grow: 1;
+        padding: 10px 15px;
+        font-size: 15px;
+        margin: 0;
+    }
+
+    #modal-cancel-btn {
+        background: var(--card-bg);
+        border: 1px solid var(--error-border);
+        color: var(--error-text);
+    }
+    
+    /* GAYA BARU UNTUK TOMBOL MODAL ALERT */
+    #alert-modal-ok-btn {
+        background: var(--accent-secondary);
+        width: 100px; /* Ukuran tetap untuk tombol OK tunggal */
+        margin: 0 auto;
+    }
+    
+    /* GAYA BARU UNTUK TOMBOL MODAL CONFIRM */
+    #confirm-modal-ok-btn {
+        background: var(--error-border); /* Merah untuk aksi sensitif */
+    }
+    #confirm-modal-cancel-btn {
+        background: var(--card-bg);
+        border: 1px solid var(--accent-secondary);
+        color: var(--accent-secondary);
+    }
+    /* --- GAYA UNTUK MODAL KUSTOM BARU (END) --- */
+    
+    /* GAYA BARU UNTUK ADMIN STEP */
+    .admin-result-box {
+        text-align: left;
+        background: rgba(106, 17, 203, 0.1);
+        border: 1px solid var(--admin-color);
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 14px;
+        color: var(--text-secondary); 
+        margin-top: 15px;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .admin-result-box b {
+        color: var(--text-primary);
+        min-width: 100px;
+        display: inline-block;
+    }
+    
+    /* GAYA BARU UNTUK FOOTER CARD (Developer Info) */
+    .developer-info {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+        font-size: 13px;
+        color: var(--text-secondary);
+        text-align: center;
+    }
+    .developer-info b {
+        color: var(--accent-secondary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3><i class="fas fa-server"></i> RESELLER CPANEL</h3>
+        <span class="sidebar-close" onclick="closeSidebar()">&times;</span>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="#" class="active" onclick="goToStep1(); closeSidebar(); return false;">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="#" onclick="showHistory(); closeSidebar(); return false;">
+            <i class="fas fa-history"></i> Riwayat Panel
+        </a>
+        <a href="#" onclick="showSettings(); closeSidebar(); return false;">
+            <i class="fas fa-cog"></i> Pengaturan
+        </a>
+        
+        <h4 id="admin-menu-header" style="color: var(--admin-color); margin: 20px; font-size: 16px; border-top: 1px solid var(--border-color); padding-top: 20px; display: none;">
+            <i class="fas fa-user-shield"></i> Menu Admin
+        </h4>
+        <a id="admin-link" href="#" class="admin-link" onclick="showAdminPanel(); closeSidebar(); return false;" style="display: none;">
+            <i class="fas fa-tools"></i> Kelola Panel & User
+        </a>
+        <a href="weather.html">
+            <i class="fas fa-cloud-sun" style="color: var(--weather-cool);"></i> Cek Cuaca
+        </a>
+        
+        <h4 style="color: var(--utility-color); margin: 20px; font-size: 16px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <i class="fas fa-tools"></i> Fitur Berguna
+        </h4>
+        <a href="https://iphone-fakechat.html-5.me/?i=1" class="utility-link" target="_blank" onclick="closeSidebar()">
+            Fake Chat iPhone
+        </a>
+        <a href="https://terimawa.com/signup?ref=64188" class="utility-link" target="_blank" onclick="closeSidebar()">
+            website (sewa wa) 1
+        </a>
+        <a href="https://www.capcut.com/tv2/ZSywbSaXt/" class="utility-link" target="_blank" onclick="closeSidebar()">
+            website (jobs capcut pro) cuan 
+        </a>
+        <a href="https://setorwa.com/signup?ref=8793" class="utility-link" target="_blank" onclick="closeSidebar()">
+            website (sewa wa) 2
+        </a>
+        <h4 style="color: var(--text-primary); margin: 20px; font-size: 16px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <i class="fas fa-share-alt"></i> Media Sosial
+        </h4>
+        <a href="https://whatsapp.com/channel/0029Vb7J6xiId7nONPDYkI2i" target="_blank" style="padding-left: 20px;">
+            <i class="fab fa-whatsapp"></i> Saluran WhatsApp
+        </a>
+        <a href="https://www.tiktok.com/@bayz22yaw" target="_blank" style="padding-left: 20px;">
+            <i class="fab fa-tiktok"></i> TikTok: @bayz22yaw
+        </a>
+        <a href="https://t.me/Bayzu1" target="_blank" style="padding-left: 20px;">
+            <i class="fab fa-telegram-plane"></i> Telegram: @Bayzu1
+        </a>
+        
+        <button class="logout" onclick="logout(); closeSidebar();">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+    
+    <div class="device-info-sidebar">
+        Perangkat: <b id="os-name-sidebar">Loading...</b><br>
+        RAM: <b id="ram-info-sidebar">N/A</b><br>
+        HP Series: <b id="hp-series-sidebar">N/A</b><br>
+        Total Pengguna: <b id="total-users-sidebar">2</b>
+    </div>
+</div>
+<div class="video-background">
+  <video id="bg-video" autoplay muted loop playsinline poster="iboy.jpg">
+    <source id="bg-video-source" src="iboyy.mp4" type="video/mp4">
+    Browser Anda tidak mendukung tag video.
+  </video>
+</div>
+
+<div class="battery-status">
+  <span id="battery-percentage">...%</span>
+  <div class="battery-icon-container">
+    <div id="battery-fill" class="battery-fill"></div>
+    <i id="charging-bolt" class="fas fa-bolt charging-indicator"></i>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-top-header">
+      <div class="menu-toggle-group" onclick="openSidebar()">
+          <i class="fas fa-bars"></i> 
+      </div>
+      <span class="logo-text">RESSELLER CPANEL</span>
+  </div>
+  <div class="video-logo-container">
+    <video id="card-video" autoplay loop muted playsinline poster="iboy.jpg">
+      <source id="card-video-source" src="iboyy.mp4" type="video/mp4">
+      Browser Anda tidak mendukung tag video.
+    </video>
+  </div>
+  <button id="toggle-audio-button" class="audio-toggle-button">
+      <i class="fas fa-volume-mute"></i> Dengarkan Suara
+  </button>
+  
+  <div class="card-header-group">
+      <h2 id="card-title">Pembuat Panel</h2>
+      <p class="sub" id="card-subtitle">Buat akun panel Anda dalam sekejap.</p>
+      
+      <span id="logged-in-username" class="logged-in-user"></span> 
+      
+      <div id="birthday-countdown">
+          <i class="fas fa-calendar-alt"></i> Loading Ulang Tahun...
+      </div>
+      <div id="time-network-status">
+        <span id="current-time"><i class="far fa-clock"></i> 00:00:00</span>
+        <span id="network-speed"><i class="fas fa-signal"></i> ... Mbps</span>
+      </div>
+  </div>
+
+  <div id="selling-alert" class="custom-alert" style="border-color: var(--error-border); background: var(--error-bg); margin-bottom: 20px;">
+    <span class="closebtn" onclick="document.getElementById('selling-alert').style.display='none';">&times;</span> 
+    <b>PERINGATAN!</b><br>
+    Jika aplikasi ini ada yang menjual kepada Anda, **segera laporkan** kepada Admin/Developer.<br>
+    <i class="fas fa-phone-alt" style="color: var(--error-border);"></i> **Contact Developer:** <a href="https://wa.me/6283109105308" target="_blank" style="color: var(--error-text); text-decoration: underline;">6283109105308</a>
+  </div>
+  <div id="password-alert" class="custom-alert">
+    <span class="closebtn" onclick="document.getElementById('password-alert').style.display='none';">&times;</span> 
+    jika password salah coba lah pake password berawalan huruf besar contoh<br>
+    <span class="bad-example">cobaa (salah)</span><br>
+    <span class="good-example">Cobaa (benar)</span>
+  </div>
+  <div id="error-message" class="error-box hidden"></div>
+
+  <div id="step1" class="step-container">
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="cth: bayu_ganteng">
+
+    <label for="paket">Paket RAM</label>
+    <select id="paket">
+      <option value="">-- Pilih Paket --</option>
+      <option value="1gb">1GB</option>
+      <option value="2gb">2GB</option>
+      <option value="3gb">3GB</option>
+      <option value="4gb">4GB</option>
+      <option value="5gb">5GB</option>
+      <option value="6gb">6GB</option>
+      <option value="7gb">7GB</option>
+      <option value="8gb">8GB</option>
+      <option value="9gb">9GB</option>
+      <option value="10gb">10gb</option>
+      <option value="unli">Unlimited</option>
+    </select>
+
+    <button id="create-button" onclick="buatPanel()">Buat Panel</button>
+    <button class="secondary-button" style="margin-top: 10px; display: none;" onclick="showHistory()">
+        <i class="fas fa-history"></i> Riwayat Panel
+    </button>
+  </div>
+
+  <div id="step2" class="step-container hidden">
+    <div class="success-box">
+      <b>Email:</b> <span id="email"></span><br>
+      <b>Username:</b> <span id="uname"></span><br>
+      <b>Password:</b> <span id="pass"></span><br>
+      <b>Link:</b> <a id="panel-link" href="https://yudzzxalicia.mycafe.biz.id" target="_blank">Buka Panel</a><br>
+      <b>Paket:</b> <span id="ram"></span>
+    </div>
+    <button class="copy-data-button" onclick="copyPanelData()">
+        <i class="fas fa-copy"></i> Salin Data
+    </button>
+    <button onclick="resetForm()">Buat Panel Lagi</button>
+    <button class="secondary-button" style="margin-top: 10px; display: none;" onclick="showHistory()">
+        <i class="fas fa-history"></i> Lihat Riwayat
+    </button>
+  </div>
+  
+  <div id="step3" class="step-container hidden">
+    <div class="history-list" id="history-list">
+      </div>
+    <button id="clear-history-btn" class="clear-history-button" onclick="clearHistory()" style="margin-top: 20px;">
+        <i class="fas fa-trash"></i> Hapus Semua Riwayat
+    </button>
+    <button class="secondary-button" style="margin-top: 10px;" onclick="goToStep1()">
+        <i class="fas fa-plus-circle"></i> Buat Panel Baru
+    </button>
+  </div>
+
+  <div id="step4" class="step-container hidden">
+      <div class="custom-alert" style="margin-top: 0;">
+          Pengaturan ini akan **disimpan di browser Anda** (Local Storage). Gunakan ini untuk mengganti konfigurasi utama panel.
+      </div>
+
+      <label for="setting-domain">Domain Panel (Contoh: https://yudzzxalicia.mycafe.biz.id)</label>
+      <input type="url" id="setting-domain" placeholder="Domain Anda" value="https://yudzzxalicia.mycafe.biz.id">
+
+      <label for="setting-plta">PLTA Key (Node API Key)</label>
+      <input type="text" id="setting-plta" placeholder="plta_xxxxxxxxxxxxxxx" value="ptla_rDQsWj2cRKDVZtIPtEmICoaFYULkmLhxPgh08yxKHus">
+
+      <label for="setting-apikey">API Key (Opsional - Jika diperlukan)</label>
+      <input type="text" id="setting-apikey" placeholder="pteo_xxxxxxxxxxxxxxx">
+
+      <button onclick="saveSettings()">
+          <i class="fas fa-save"></i> Simpan Pengaturan
+      </button>
+      
+      <h3 style="color: var(--text-primary); margin-top: 25px; margin-bottom: 10px; font-size: 18px; text-align: left;">Ganti Media</h3>
+      <div class="button-group">
+          <button class="secondary-button" onclick="changeMedia('background')">
+              <i class="fas fa-video"></i> Video BG
+          </button>
+          <button class="secondary-button" onclick="changeMedia('logo')">
+              <i class="fas fa-image"></i> Logo
+          </button>
+      </div>
+
+  </div>
+
+  <div id="step5" class="step-container hidden">
+      <h3 style="color: var(--text-primary); margin-top: 0; font-size: 18px; text-align: left;"><i class="fas fa-user-shield" style="color: var(--admin-color);"></i> Kelola Pengguna & Panel</h3>
+      <p class="sub" style="margin-bottom: 15px;">Kelola status ban pengguna dan riwayat server lokal.</p>
+
+      <label for="admin-username-input">Cek / Kelola Username</label>
+      <input type="text" id="admin-username-input" placeholder="Masukkan Username Pengguna">
+      
+      <div class="button-group" style="margin-bottom: 0;">
+          <button class="secondary-button" onclick="checkUsernameStatus()">
+              <i class="fas fa-search"></i> Cek Status User
+          </button>
+          <button class="copy-data-button" style="background: var(--admin-color);" onclick="goToServerStatus()">
+              <i class="fas fa-server"></i> Cek Status Server
+          </button>
+      </div>
+      
+      <div id="admin-user-status" class="admin-result-box hidden">
+          <b>Username:</b> <span id="admin-check-user"></span><br>
+          <b>Status Akun:</b> <span id="admin-check-user-status"></span><br>
+          <b>Nomor WA:</b> <span id="admin-check-wa"></span>
+          <div class="button-group" style="margin-top: 15px;">
+              <button id="admin-ban-btn" onclick="toggleBanStatus(true)" style="background: var(--error-border);">
+                  <i class="fas fa-user-slash"></i> Banned Username
+              </button>
+              <button id="admin-unban-btn" onclick="toggleBanStatus(false)" style="background: var(--battery-full); display: none;">
+                  <i class="fas fa-user-check"></i> Pulihkan Banned
+              </button>
+          </div>
+      </div>
+      
+      <h3 style="color: var(--text-primary); margin-top: 30px; margin-bottom: 10px; font-size: 18px; text-align: left;">Kelola Riwayat Panel</h3>
+      <p class="sub" style="margin-bottom: 15px;">Aksi ini sama dengan menu Riwayat Panel, namun lebih ringkas untuk Admin.</p>
+      
+      <div class="history-list" id="admin-history-list">
+        </div>
+      
+      <button class="clear-history-button" onclick="clearHistory()" style="margin-top: 20px;">
+          <i class="fas fa-trash"></i> Hapus Semua Riwayat Lokal
+      </button>
+
+      <button class="secondary-button" style="margin-top: 10px;" onclick="goToStep1()">
+          <i class="fas fa-home"></i> Kembali ke Dashboard
+      </button>
+
+  </div>
+  
+  <div class="developer-info">
+      <i class="fas fa-code"></i> Developed by <b>Iboyyy</b>
+  </div>
+  </div>
+
+<div class="custom-modal-overlay" id="custom-media-modal-overlay">
+    <div class="custom-modal">
+        <h3 id="modal-title"><i class="fas fa-file-upload"></i> Ganti Media</h3>
+        <p id="modal-message">Masukkan URL media baru di bawah. Kosongkan jika tidak ingin mengubah.</p>
+        
+        <div class="input-group">
+            <label id="input-url-label" for="modal-input-url">URL Media (Video/Gambar):</label>
+            <input type="text" id="modal-input-url" placeholder="Contoh: https://domain.com/media.mp4">
+        </div>
+
+        <div class="input-group">
+            <label id="input-poster-label" for="modal-input-poster">URL Poster/Fallback (JPG/PNG):</label>
+            <input type="text" id="modal-input-poster" placeholder="Contoh: https://domain.com/poster.jpg">
+        </div>
+        
+        <div class="modal-actions">
+            <button id="modal-cancel-btn"><i class="fas fa-times"></i> BATAL</button>
+            <button id="modal-ok-btn"><i class="fas fa-check"></i> OKE</button>
+        </div>
+    </div>
+</div>
+
+<div class="custom-modal-overlay" id="custom-alert-modal-overlay">
+    <div class="custom-modal">
+        <h3 id="alert-modal-title"><i class="fas fa-info-circle"></i> Pemberitahuan</h3>
+        <p id="alert-modal-message">Isi pesan notifikasi.</p>
+        <div class="modal-actions" style="justify-content: center;">
+            <button id="alert-modal-ok-btn"><i class="fas fa-check"></i> OKE</button>
+        </div>
+    </div>
+</div>
+<div class="custom-modal-overlay" id="custom-confirm-modal-overlay">
+    <div class="custom-modal">
+        <h3 id="confirm-modal-title"><i class="fas fa-question-circle"></i> Konfirmasi Aksi</h3>
+        <p id="confirm-modal-message">Anda yakin ingin melanjutkan aksi ini?</p>
+        <div class="modal-actions">
+            <button id="confirm-modal-cancel-btn"><i class="fas fa-times"></i> BATAL</button>
+            <button id="confirm-modal-ok-btn"><i class="fas fa-check"></i> OKE</button>
+        </div>
+    </div>
+</div>
+<script>
+  // --- KONSTANTA & VARIABEL GLOBAL ---
+  const OWNER_USERNAME = "iboyy"; 
+  const USERS_KEY = 'boy12';
+  const BANNED_USERS_KEY = 'bannedUsers';
+  const loggedInUser = localStorage.getItem('loggedInUser');
+  
+  // --- KONSTANTA BARU ULANG TAHUN ---
+  // Target: 20 Mei 2026 (186 hari dari 15 Nov 2025)
+  const BIRTHDAY_TARGET_DATE = new Date('2026-05-20T00:00:00'); 
+  const BIRTHDAY_KEY = 'birthdayNotified'; // Key untuk LocalStorage
+  
+  // --- Kunci Akses: Redirect jika belum login ---
+  if (localStorage.getItem('isLoggedIn') !== 'true' || !loggedInUser) {
+      window.location.href = 'login.html';
+  }
+  
+  // Variabel konfigurasi paket (SESUAI DENGAN KODE ASLI)
+  const hargaPaket = {
+    "1gb": { ram: 1000, disk: 1000, cpu: 40 },
+    "2gb": { ram: 2000, disk: 1000, cpu: 60 },
+    "3gb": { ram: 3000, disk: 2000, cpu: 80 },
+    "4gb": { ram: 4000, disk: 2000, cpu: 100 },
+    "5gb": { ram: 5000, disk: 3000, cpu: 120 },
+    "6gb": { ram: 6000, disk: 3000, cpu: 140 },
+    "7gb": { ram: 7000, disk: 4000, cpu: 160 },
+    "8gb": { ram: 8000, disk: 4000, cpu: 180 },
+    "9gb": { ram: 9000, disk: 5000, cpu: 200 },
+    "10gb": { ram: 10000, disk: 5000, cpu: 220 },
+    "unli": { ram: 0, disk: 0, cpu: 0 }
+  };
+
+  // Referensi elemen DOM
+  const createButton = document.getElementById('create-button');
+  const errorMessage = document.getElementById('error-message');
+  const historyListElement = document.getElementById('history-list');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  const step4 = document.getElementById('step4'); 
+  const step5 = document.getElementById('step5'); // Admin Panel Baru
+  const passwordAlert = document.getElementById('password-alert');
+  const cardTitle = document.getElementById('card-title');
+  const cardSubtitle = document.getElementById('card-subtitle');
+  const panelLink = document.getElementById('panel-link');
+  const bgVideo = document.getElementById('bg-video');
+  const bgVideoSource = document.getElementById('bg-video-source');
+  const cardVideo = document.getElementById('card-video');
+  const cardVideoSource = document.getElementById('card-video-source');
+  const toggleAudioButton = document.getElementById('toggle-audio-button');
+  
+  // Referensi Admin DOM BARU
+  const adminMenuHeader = document.getElementById('admin-menu-header');
+  const adminLink = document.getElementById('admin-link');
+  const adminUsernameInput = document.getElementById('admin-username-input');
+  const adminUserStatus = document.getElementById('admin-user-status');
+  const adminCheckUser = document.getElementById('admin-check-user');
+  const adminCheckUserStatus = document.getElementById('admin-check-user-status');
+  const adminCheckWa = document.getElementById('admin-check-wa');
+  const adminBanBtn = document.getElementById('admin-ban-btn');
+  const adminUnbanBtn = document.getElementById('admin-unban-btn');
+  const adminHistoryList = document.getElementById('admin-history-list');
+
+  // Referensi Elemen Sidebar
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+  const sidebarMenuItems = document.querySelectorAll('.sidebar-menu a');
+  
+  // Referensi Modal Kustom Media
+  const customModalOverlay = document.getElementById('custom-media-modal-overlay');
+  const modalTitle = document.getElementById('modal-title');
+  const modalMessage = document.getElementById('modal-message');
+  const modalInputUrl = document.getElementById('modal-input-url');
+  const modalInputPoster = document.getElementById('modal-input-poster');
+  const inputUrlLabel = document.getElementById('input-url-label');
+  const inputPosterLabel = document.getElementById('input-poster-label');
+  const modalOkBtn = document.getElementById('modal-ok-btn');
+  const modalCancelBtn = document.getElementById('modal-cancel-btn');
+  
+  // Referensi Modal Kustom Alert BARU
+  const customAlertModalOverlay = document.getElementById('custom-alert-modal-overlay');
+  const alertModalTitle = document.getElementById('alert-modal-title');
+  const alertModalMessage = document.getElementById('alert-modal-message');
+  const alertModalOkBtn = document.getElementById('alert-modal-ok-btn');
+  
+  // Referensi Modal Kustom Confirm BARU
+  const customConfirmModalOverlay = document.getElementById('custom-confirm-modal-overlay');
+  const confirmModalTitle = document.getElementById('confirm-modal-title');
+  const confirmModalMessage = document.getElementById('confirm-modal-message');
+  const confirmModalOkBtn = document.getElementById('confirm-modal-ok-btn');
+  const confirmModalCancelBtn = document.getElementById('confirm-modal-cancel-btn');
+
+
+  // --- KONFIGURASI DEFAULT ---
+  const DEFAULT_DOMAIN = 'https://yudzzxalicia.mycafe.biz.id';
+  const DEFAULT_PLTA = 'ptla_rDQsWj2cRKDVZtIPtEmICoaFYULkmLhxPgh08yxKHus';
+  const DEFAULT_API_URL = 'https://api.resellergaming.my.id/pterodactyl/addpanel';
+
+  let currentDomain = DEFAULT_DOMAIN;
+  let currentPLTA = DEFAULT_PLTA;
+  let currentApiKey = ''; 
+  
+  // --- FUNGSI CUSTOM ALERT (PENGGANTI alert() bawaan) ---
+  function showCustomAlert(message, title = 'Pemberitahuan', iconClass = 'fas fa-info-circle') {
+      alertModalTitle.innerHTML = `<i class="${iconClass}"></i> ${title}`;
+      alertModalMessage.innerText = message;
+      customAlertModalOverlay.classList.add('visible');
+
+      return new Promise((resolve) => {
+          const handleOk = () => {
+              customAlertModalOverlay.classList.remove('visible');
+              alertModalOkBtn.removeEventListener('click', handleOk);
+              document.removeEventListener('keydown', handleKeydownAlert);
+              resolve(true); // Selalu resolve true untuk menggantikan fungsi alert
+          };
+          
+          const handleKeydownAlert = (event) => {
+              if (event.key === 'Enter' || event.key === 'Escape') {
+                  handleOk();
+              }
+          };
+
+          alertModalOkBtn.addEventListener('click', handleOk);
+          document.addEventListener('keydown', handleKeydownAlert);
+      });
+  }
+  // --- AKHIR FUNGSI CUSTOM ALERT ---
+
+  // --- FUNGSI CUSTOM CONFIRM (PENGGANTI confirm() bawaan) ---
+  function showCustomConfirm(message, title = 'Konfirmasi Aksi', iconClass = 'fas fa-question-circle') {
+      confirmModalTitle.innerHTML = `<i class="${iconClass}" id="confirm-icon"></i> ${title}`;
+      confirmModalMessage.innerText = message;
+      customConfirmModalOverlay.classList.add('visible');
+
+      return new Promise((resolve) => {
+          const handleOk = () => {
+              cleanup();
+              resolve(true);
+          };
+
+          const handleCancel = () => {
+              cleanup();
+              resolve(false);
+          };
+          
+          const handleKeydownConfirm = (event) => {
+              if (event.key === 'Enter') {
+                  handleOk();
+              } else if (event.key === 'Escape') {
+                  handleCancel();
+              }
+          };
+
+          confirmModalOkBtn.addEventListener('click', handleOk);
+          confirmModalCancelBtn.addEventListener('click', handleCancel);
+          document.addEventListener('keydown', handleKeydownConfirm);
+
+          const cleanup = () => {
+              customConfirmModalOverlay.classList.remove('visible');
+              confirmModalOkBtn.removeEventListener('click', handleOk);
+              confirmModalCancelBtn.removeEventListener('click', handleCancel);
+              document.removeEventListener('keydown', handleKeydownConfirm);
+          };
+      });
+  }
+  // --- AKHIR FUNGSI CUSTOM CONFIRM ---
+
+
+  // --- USER/BAN MANAGEMENT LOGIC ---
+  function getBannedUsers() {
+      const banned = localStorage.getItem(BANNED_USERS_KEY);
+      const defaultBans = ['hacker', 'admin1', 'testuser']; 
+      return banned ? JSON.parse(banned) : defaultBans;
+  }
+  
+  function getRegisteredUsers() {
+        const users = localStorage.getItem(USERS_KEY);
+        const defaultUsers = {
+            [OWNER_USERNAME]: { password: 'adminyud1', whatsapp: 'N/A' }
+        };
+        return users ? { ...defaultUsers, ...JSON.parse(users) } : defaultUsers;
+  }
+  
+  function saveBannedUsers(bannedList) {
+      localStorage.setItem(BANNED_USERS_KEY, JSON.stringify(bannedList));
+  }
+  
+  function isUserBanned(username) {
+      const bannedUsers = getBannedUsers();
+      return bannedUsers.includes(username.toLowerCase());
+  }
+
+  // Fungsi untuk Banned/Pulihkan
+  function toggleBan(username, isBan) {
+      const bannedUsers = getBannedUsers();
+      const lowerUsername = username.toLowerCase();
+      
+      if (isBan) {
+          if (!bannedUsers.includes(lowerUsername)) {
+              bannedUsers.push(lowerUsername);
+              saveBannedUsers(bannedUsers);
+              showCustomAlert(`Username ${username} berhasil di-BANNED permanen.`, 'Aksi Admin Berhasil', 'fas fa-user-slash');
+          } else {
+              showCustomAlert(`Username ${username} sudah di-BANNED.`, 'Perhatian', 'fas fa-exclamation-triangle');
+          }
+      } else {
+          const index = bannedUsers.indexOf(lowerUsername);
+          if (index > -1) {
+              bannedUsers.splice(index, 1);
+              saveBannedUsers(bannedUsers);
+              showCustomAlert(`Username ${username} berhasil di-PULIHKAN.`, 'Aksi Admin Berhasil', 'fas fa-user-check');
+          } else {
+              showCustomAlert(`Username ${username} tidak dalam daftar banned.`, 'Perhatian', 'fas fa-exclamation-triangle');
+          }
+      }
+      checkUsernameStatus(); // Update tampilan
+  }
+  
+  // --- ADMIN PANEL LOGIC (STEP 5) ---
+
+  // Fungsi saat tombol Cek Status User diklik
+  function checkUsernameStatus() {
+      const username = adminUsernameInput.value.trim();
+      const bannedUsers = getBannedUsers();
+      const registeredUsers = getRegisteredUsers();
+      adminUserStatus.classList.add('hidden');
+      
+      if (!username) {
+          showError('Masukkan Username di bidang input Admin.');
+          return;
+      }
+      
+      const lowerUsername = username.toLowerCase();
+      const userData = registeredUsers[username];
+      const isBanned = isUserBanned(username);
+
+      adminCheckUser.innerText = username;
+      adminCheckWa.innerText = userData ? (userData.whatsapp || 'N/A') : 'Tidak Terdaftar';
+
+      if (isBanned) {
+          adminCheckUserStatus.innerText = 'BANNED PERMANEN';
+          adminCheckUserStatus.style.color = 'var(--error-border)';
+          adminBanBtn.style.display = 'none';
+          adminUnbanBtn.style.display = 'block';
+      } else if (userData) {
+          adminCheckUserStatus.innerText = 'Aktif / Terdaftar';
+          adminCheckUserStatus.style.color = 'var(--battery-full)';
+          adminBanBtn.style.display = 'block';
+          adminUnbanBtn.style.display = 'none';
+      } else {
+          adminCheckUserStatus.innerText = 'Belum Terdaftar';
+          adminCheckUserStatus.style.color = 'var(--utility-color)';
+          adminBanBtn.style.display = 'block';
+          adminUnbanBtn.style.display = 'none';
+      }
+      
+      adminUserStatus.classList.remove('hidden');
+      hideError();
+  }
+  
+  // Fungsi untuk Ban/Pulihkan dari Admin Panel
+  async function toggleBanStatus(isBan) {
+      const username = adminUsernameInput.value.trim();
+      if (!username) return;
+      
+      const action = isBan ? 'BANNED permanen' : 'PULIHKAN';
+      
+      const confirmed = await showCustomConfirm(`Yakin ingin ${action} username ${username}?`, 'Konfirmasi Aksi Admin', 'fas fa-user-slash');
+
+      if (confirmed) {
+          toggleBan(username, isBan);
+      }
+  }
+
+  // Fungsi untuk menampilkan status server (riwayat panel)
+  function renderAdminServerStatus() {
+      const history = getPanelHistory();
+      adminHistoryList.innerHTML = '';
+      
+      if (history.length === 0) {
+          adminHistoryList.innerHTML = '<p class="empty-history">Belum ada riwayat pembuatan panel.</p>';
+          return;
+      }
+
+      history.forEach((item, index) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'history-item';
+          
+          itemDiv.innerHTML = `
+              <div><strong>User Pembuat:</strong> ${item.username}</div>
+              <div><strong>Tanggal:</strong> ${item.date}</div>
+              <div><strong>Paket:</strong> ${item.paket.toUpperCase()}</div>
+              <div><strong>Domain:</strong> ${item.domain.replace('https://', '')}</div>
+              <div class="history-actions" style="margin-top: 5px; justify-content: flex-start;">
+                  <button class="delete-server-button" style="width: 100px;" onclick="deletePanelByAdmin(${index})">
+                      <i class="fas fa-trash-alt"></i> Delete
+                  </button>
+              </div>
+          `;
+          adminHistoryList.appendChild(itemDiv);
+      });
+  }
+
+  // Fungsi untuk menghapus panel dari riwayat oleh Admin
+  async function deletePanelByAdmin(index) {
+      const history = getPanelHistory();
+      
+      if (index >= 0 && index < history.length) {
+          const usernameToDelete = history[index].username;
+          
+          const confirmed = await showCustomConfirm(`ADMIN: Yakin ingin menghapus riwayat server ${usernameToDelete} (LOKAL)?`, 'Hapus Riwayat Server', 'fas fa-trash-alt');
+
+          if (confirmed) {
+              
+              history.splice(index, 1); 
+              localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+              
+              renderAdminServerStatus(); // Render ulang tampilan riwayat Admin
+              showCustomAlert(`Riwayat Server untuk ${usernameToDelete} berhasil dihapus.`, 'Aksi Admin Berhasil', 'fas fa-trash-alt');
+
+          }
+      }
+  }
+
+  function goToServerStatus() {
+      // Fungsi ini tidak mengubah step, hanya memastikan riwayat ter-render di Step 5
+      renderAdminServerStatus();
+      showCustomAlert('Status Server (Riwayat Panel Lokal) telah diperbarui di bawah.', 'Pembaruan Status', 'fas fa-server');
+  }
+
+  function showAdminPanel() {
+      if (loggedInUser === OWNER_USERNAME) {
+          setStep(5);
+          adminUsernameInput.value = '';
+          adminUserStatus.classList.add('hidden');
+          renderAdminServerStatus(); // Muat riwayat server saat admin masuk
+      } else {
+          showCustomAlert('Akses Ditolak! Anda bukan Owner.', 'Akses Ditolak', 'fas fa-times-circle');
+          goToStep1();
+      }
+  }
+
+  // --- LOGIC SIDEBAR ---
+  function openSidebar() {
+      sidebar.classList.add('visible');
+      sidebarOverlay.classList.add('visible');
+  }
+
+  function closeSidebar() {
+      sidebar.classList.remove('visible');
+      sidebarOverlay.classList.remove('visible');
+  }
+  
+  if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', closeSidebar);
+  }
+  
+  function updateSidebarActive(targetStep) {
+      sidebarMenuItems.forEach(item => item.classList.remove('active'));
+      // Logic penentuan menu aktif
+      if (targetStep === 1) {
+          document.querySelector('.sidebar-menu a:nth-child(1)').classList.add('active'); // Dashboard
+      } else if (targetStep === 3) {
+          document.querySelector('.sidebar-menu a:nth-child(2)').classList.add('active'); // Riwayat
+      } else if (targetStep === 4) {
+          document.querySelector('.sidebar-menu a:nth-child(3)').classList.add('active'); // Pengaturan
+      } else if (targetStep === 5) {
+          document.getElementById('admin-link').classList.add('active'); // Admin
+      }
+  }
+  // --- AKHIR LOGIC SIDEBAR ---
+
+  // --- LOGIC MODAL KUSTOM MEDIA ---
+  function showCustomPrompt(message, type) {
+      return new Promise((resolve) => {
+          // ... (LOGIC MODAL TETAP SAMA) ...
+          modalInputUrl.value = '';
+          modalInputPoster.value = '';
+          modalTitle.innerHTML = `<i class="fas fa-${type === 'background' ? 'video' : 'image'}"></i> Ganti ${type === 'background' ? 'Video Latar' : 'Logo Panel'}`;
+          modalMessage.innerText = message;
+          
+          inputUrlLabel.innerText = `URL Media Utama (${type === 'background' ? 'mp4/webm' : 'mp4/gif/jpg'}):`;
+          inputPosterLabel.innerText = `URL Poster/Fallback (jpg/png):`;
+
+
+          customModalOverlay.classList.add('visible');
+          
+          modalInputUrl.focus();
+
+          const handleOk = () => {
+              const url = modalInputUrl.value.trim();
+              const poster = modalInputPoster.value.trim();
+              cleanup();
+              resolve({ url: url || null, poster: poster || null }); 
+          };
+
+          const handleCancel = () => {
+              cleanup();
+              resolve(null);
+          };
+
+          const handleKeydown = (event) => {
+              if (event.key === 'Enter') {
+                  handleOk();
+              } else if (event.key === 'Escape') {
+                  handleCancel();
+              }
+          };
+
+          modalOkBtn.addEventListener('click', handleOk);
+          modalCancelBtn.addEventListener('click', handleCancel);
+          document.addEventListener('keydown', handleKeydown);
+
+          const cleanup = () => {
+              customModalOverlay.classList.remove('visible');
+              modalOkBtn.removeEventListener('click', handleOk);
+              modalCancelBtn.removeEventListener('click', handleCancel);
+              document.removeEventListener('keydown', handleKeydown);
+          };
+      });
+  }
+  // --- AKHIR LOGIC MODAL KUSTOM MEDIA ---
+
+
+  // --- LOGIC PENGATURAN (LOCALSTORAGE) ---
+  const SETTINGS_KEY = 'panelSettings';
+
+  function loadSettings() {
+      const settings = localStorage.getItem(SETTINGS_KEY);
+      if (settings) {
+          const loadedSettings = JSON.parse(settings);
+          currentDomain = loadedSettings.domain || DEFAULT_DOMAIN;
+          currentPLTA = loadedSettings.plta || DEFAULT_PLTA;
+          currentApiKey = loadedSettings.apikey || '';
+          
+          if (document.getElementById('setting-domain')) {
+              document.getElementById('setting-domain').value = currentDomain;
+          }
+          if (document.getElementById('setting-plta')) {
+              document.getElementById('setting-plta').value = currentPLTA;
+          }
+          if (document.getElementById('setting-apikey')) {
+              document.getElementById('setting-apikey').value = currentApiKey;
+          }
+          
+          panelLink.href = currentDomain;
+          panelLink.innerText = `Buka Panel (${currentDomain.replace('https://', '').replace('http://', '')})`;
+          
+          updateMedia(loadedSettings.media || {});
+          
+      } else {
+           if (document.getElementById('setting-domain')) document.getElementById('setting-domain').value = DEFAULT_DOMAIN;
+           if (document.getElementById('setting-plta')) document.getElementById('setting-plta').value = DEFAULT_PLTA;
+      }
+  }
+
+  function saveSettings() {
+      const newDomain = document.getElementById('setting-domain').value.trim();
+      const newPLTA = document.getElementById('setting-plta').value.trim();
+      const newApiKey = document.getElementById('setting-apikey').value.trim();
+      
+      const media = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}').media || {};
+      
+      const newSettings = {
+          domain: newDomain,
+          plta: newPLTA,
+          apikey: newApiKey,
+          media: media 
+      };
+
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(newSettings));
+      
+      currentDomain = newDomain;
+      currentPLTA = newPLTA;
+      currentApiKey = newApiKey;
+      
+      panelLink.href = currentDomain;
+      panelLink.innerText = `Buka Panel (${currentDomain.replace('https://', '').replace('http://', '')})`;
+      
+      showCustomAlert('Pengaturan API Key dan Domain berhasil disimpan!', 'Pengaturan Disimpan', 'fas fa-check-circle');
+      goToStep1();
+  }
+  
+  function updateMedia(media) {
+    if (media.bgVideo) {
+        bgVideoSource.src = media.bgVideo;
+        bgVideo.load();
+    }
+    if (media.bgPoster) {
+        bgVideo.poster = media.bgPoster;
+    }
+    if (media.cardVideo) {
+        cardVideoSource.src = media.cardVideo;
+        cardVideo.load();
+    }
+    if (media.cardPoster) {
+        cardVideo.poster = media.cardPoster;
+    }
+  }
+
+  async function changeMedia(type) {
+      const currentSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+      currentSettings.media = currentSettings.media || {};
+      
+      let message, newSrcKey, newPosterKey;
+      let titleMessage = '';
+
+      if (type === 'background') {
+          titleMessage = 'Ganti Video Background';
+          message = 'Masukkan URL baru untuk video background (.mp4/.webm) dan poster fallback (.jpg/.png).';
+          newSrcKey = 'bgVideo';
+          newPosterKey = 'bgPoster';
+
+      } else if (type === 'logo') {
+          titleMessage = 'Ganti Logo Panel';
+          message = 'Masukkan URL baru untuk video/gambar logo (.mp4/.gif/.jpg) dan poster fallback (.jpg/.png).';
+          newSrcKey = 'cardVideo';
+          newPosterKey = 'cardPoster';
+      }
+      
+      const result = await showCustomPrompt(message, type);
+
+      if (result) {
+          let updated = false;
+          
+          if (result.url) {
+              currentSettings.media[newSrcKey] = result.url;
+              updated = true;
+          }
+          if (result.poster) {
+              currentSettings.media[newPosterKey] = result.poster;
+              updated = true;
+          }
+          
+          if (updated) {
+              localStorage.setItem(SETTINGS_KEY, JSON.stringify(currentSettings));
+              updateMedia(currentSettings.media);
+              showCustomAlert(`${titleMessage} berhasil diubah! Harap refresh halaman jika media tidak langsung berubah.`, 'Media Diperbarui', 'fas fa-image');
+          } else {
+              showCustomAlert('Tidak ada URL baru yang dimasukkan. Pembatalan perubahan.', 'Pembatalan', 'fas fa-undo');
+          }
+          
+      } else {
+          showCustomAlert('Pembatalan perubahan media.', 'Pembatalan', 'fas fa-undo');
+      }
+  }
+  // --- AKHIR LOGIC PENGATURAN ---
+
+
+  // --- LOGIC UNTUK VIDEO LOGO DAN TOMBOL AUDIO ---
+  if (cardVideo && toggleAudioButton) {
+      toggleAudioButton.addEventListener('click', () => {
+          if (cardVideo.muted) {
+              cardVideo.muted = false;
+              toggleAudioButton.innerHTML = '<i class="fas fa-volume-up"></i> Matikan Suara';
+          } else {
+              cardVideo.muted = true;
+              toggleAudioButton.innerHTML = '<i class="fas fa-volume-mute"></i> Dengarkan Suara';
+          }
+      });
+  }
+  // --- AKHIR LOGIC AUDIO ---
+  
+  
+  // Fungsi untuk menampilkan pesan error
+  function showError(message) {
+    errorMessage.innerText = message;
+    errorMessage.classList.remove('hidden');
+    // Reset tombol jika terjadi error
+    createButton.disabled = false;
+    createButton.innerHTML = 'Buat Panel';
+  }
+  
+  // Fungsi untuk menyembunyikan pesan error
+  function hideError() {
+    errorMessage.classList.add('hidden');
+  }
+  
+  // Fungsi untuk mengganti tampilan langkah
+  function setStep(step) {
+      step1.classList.add('hidden');
+      step2.classList.add('hidden');
+      step3.classList.add('hidden');
+      step4.classList.add('hidden'); 
+      step5.classList.add('hidden'); // Sembunyikan Step 5
+      passwordAlert.style.display = 'none';
+      document.getElementById('selling-alert').style.display = 'none'; // Sembunyikan alert penjualan di step lain
+      hideError();
+      
+      // Update Sidebar Active Class
+      updateSidebarActive(step);
+
+      if (step === 1) {
+          step1.classList.remove('hidden');
+          passwordAlert.style.display = 'block';
+          document.getElementById('selling-alert').style.display = 'block'; // Tampilkan alert penjualan di dashboard
+          cardTitle.innerText = 'Pembuat Panel';
+          cardSubtitle.innerText = 'Buat akun panel Anda dalam sekejap.';
+      } else if (step === 2) {
+          step2.classList.remove('hidden');
+          cardTitle.innerText = 'Panel Berhasil Dibuat!';
+          cardSubtitle.innerText = 'Detail akun Anda tercantum di bawah.';
+      } else if (step === 3) {
+          step3.classList.remove('hidden');
+          cardTitle.innerText = 'Riwayat Panel';
+          cardSubtitle.innerText = 'Kelola detail akun panel yang telah Anda buat.';
+          renderHistory();
+      } else if (step === 4) { 
+          step4.classList.remove('hidden');
+          cardTitle.innerText = 'Pengaturan Panel';
+          cardSubtitle.innerText = 'Ganti Domain, PLTA Key, dan Media.';
+      } else if (step === 5) { 
+          step5.classList.remove('hidden');
+          cardTitle.innerText = 'ADMIN PANEL';
+          cardSubtitle.innerText = 'Kelola Pengguna & Status Server Lokal.';
+      }
+  }
+
+  function goToStep1() {
+      resetForm();
+      setStep(1);
+  }
+
+  function showHistory() {
+      setStep(3);
+  }
+  
+  function showSettings() { 
+      loadSettings(); 
+      setStep(4);
+  }
+
+  // --- LOGIC RIWAYAT PANEL (LOCALSTORAGE) ---
+  const HISTORY_KEY = 'panelHistory';
+
+  function getPanelHistory() {
+      const history = localStorage.getItem(HISTORY_KEY);
+      return history ? JSON.parse(history) : [];
+  }
+
+  function savePanelToHistory(panelData) {
+      const history = getPanelHistory();
+      // Tambahkan data baru di awal array
+      history.unshift(panelData);
+      // Batasi jumlah riwayat (misalnya, 20 item)
+      if (history.length > 20) {
+          history.pop();
+      }
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  }
+  
+  function renderHistory() {
+      const history = getPanelHistory();
+      historyListElement.innerHTML = ''; // Kosongkan list
+      
+      if (history.length === 0) {
+          historyListElement.innerHTML = '<p class="empty-history">Belum ada riwayat pembuatan panel.</p>';
+          document.getElementById('clear-history-btn').disabled = true;
+          return;
+      }
+      
+      document.getElementById('clear-history-btn').disabled = false;
+
+      history.forEach((item, index) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'history-item';
+          
+          // Sandi disembunyikan secara default
+          const maskedPassword = '*'.repeat(item.password.length > 10 ? 10 : item.password.length);
+          
+          itemDiv.innerHTML = `
+              <div><strong>Tanggal:</strong> ${item.date}</div>
+              <div><strong>Username:</strong> ${item.username}</div>
+              <div><strong>Email:</strong> ${item.email}</div>
+              <div><strong>Paket:</strong> ${item.paket.toUpperCase()}</div>
+              <div><strong>Password:</strong> <span id="pass-${index}" data-masked="true">${maskedPassword}</span></div>
+              <div class="history-actions">
+                  <button class="delete-server-button" onclick="deletePanel(${index})">
+                      <i class="fas fa-trash-alt"></i> Hapus Server
+                  </button>
+                  <a href="${item.domain || currentDomain}" target="_blank" style="width: 50%; text-decoration: none;">
+                      <button style="background: var(--battery-full);">
+                          <i class="fas fa-external-link-alt"></i> Buka Panel
+                      </button>
+                  </a>
+              </div>
+          `;
+          historyListElement.appendChild(itemDiv);
+      });
+  }
+
+  // Fungsi untuk menghapus panel dari riwayat
+  async function deletePanel(index) {
+      const history = getPanelHistory();
+      
+      if (index >= 0 && index < history.length) {
+          const usernameToDelete = history[index].username;
+          
+          const confirmed = await showCustomConfirm(`Anda yakin ingin menghapus riwayat panel untuk username: ${usernameToDelete}?`, 'Hapus Panel', 'fas fa-trash');
+          
+          if (confirmed) {
+              
+              history.splice(index, 1); 
+              localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+              
+              renderHistory(); 
+              
+              showCustomAlert(`Riwayat Panel untuk ${usernameToDelete} berhasil dihapus.`, 'Riwayat Dihapus', 'fas fa-trash');
+
+          }
+      }
+  }
+  
+  async function clearHistory() {
+      const confirmed = await showCustomConfirm('Anda yakin ingin menghapus SEMUA riwayat panel? Tindakan ini tidak dapat dibatalkan.', 'Hapus Semua Riwayat', 'fas fa-trash');
+      
+      if (confirmed) {
+          localStorage.removeItem(HISTORY_KEY);
+          renderHistory(); 
+          if (document.getElementById('admin-history-list')) renderAdminServerStatus(); // Update Admin view
+          showCustomAlert('Semua riwayat panel berhasil dihapus!', 'Riwayat Dihapus', 'fas fa-trash');
+      }
+  }
+  // --- AKHIR LOGIC RIWAYAT PANEL ---
+
+
+  // --- LOGIC SALIN DATA ---
+  function copyPanelData() {
+      const email = document.getElementById('email').innerText;
+      const uname = document.getElementById('uname').innerText;
+      const pass = document.getElementById('pass').innerText;
+      const link = document.getElementById('panel-link').href;
+      
+      const dataToCopy = `
+Panel Berhasil Dibuat!
+
+Link Panel: ${link}
+Username: ${uname}
+Password: ${pass}
+Email: ${email}
+      `.trim();
+
+      navigator.clipboard.writeText(dataToCopy).then(() => {
+          showCustomAlert('Data Panel (Link, Username, Password, Email) berhasil disalin ke clipboard!', 'Salin Berhasil', 'fas fa-copy');
+      }).catch(err => {
+          console.error('Gagal menyalin: ', err);
+          showCustomAlert('Gagal menyalin data. Coba salin manual.', 'Salin Gagal', 'fas fa-times-circle');
+      });
+  }
+  // --- AKHIR LOGIC SALIN DATA ---
+
+
+  // Fungsi utama pembuatan panel (LOGIC ASLI)
+  async function buatPanel() {
+    hideError();
+    
+    createButton.disabled = true;
+    createButton.innerHTML = '<span class="spinner"></span> Membuat...';
+
+    const username = document.getElementById('username').value.trim();
+    const paket = document.getElementById('paket').value;
+
+    if (!username || !paket) {
+      showError('Username dan paket wajib diisi!');
+      return;
+    }
+    
+    if (isUserBanned(username)) {
+        showError(`Username **${username}** telah dibanned permanen oleh Admin dan tidak dapat membuat panel.`);
+        return;
+    }
+
+    if (!currentDomain.startsWith('http')) {
+        showError('Domain harus dimulai dengan http:// atau https://');
+        return;
+    }
+    if (!currentPLTA) {
+        showError('PLTA Key tidak boleh kosong. Harap atur di Pengaturan.');
+        return;
+    }
+
+    const conf = hargaPaket[paket];
+    
+    const apiUrl = `${DEFAULT_API_URL}?domain=${currentDomain}&plta=${currentPLTA}&username=${username}&disk=${conf.disk}&cpu=${conf.cpu}`;
+
+
+    try {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+
+      if (data && data.user) {
+        
+        const generatedPassword = data.user.attributes.username; 
+        const panelData = {
+            date: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            username: data.user.attributes.username,
+            email: data.user.attributes.email,
+            password: generatedPassword,
+            paket: paket,
+            domain: currentDomain
+        };
+
+        savePanelToHistory(panelData);
+
+        setStep(2); 
+        
+        document.getElementById('email').innerText = panelData.email;
+        document.getElementById('uname').innerText = panelData.username;
+        document.getElementById('pass').innerText = panelData.password; 
+        document.getElementById('ram').innerText = panelData.paket.toUpperCase();
+        panelLink.href = panelData.domain;
+        
+      } else {
+        showError(data.message || 'Gagal membuat panel. Coba lagi.');
+      }
+    } catch (err) {
+      showError('Terjadi kesalahan: ' + err.message);
+    }
+  }
+
+  // Fungsi untuk reset form
+  function resetForm() {
+    document.getElementById('username').value = '';
+    document.getElementById('paket').value = '';
+    
+    hideError();
+    
+    createButton.disabled = false;
+    createButton.innerHTML = 'Buat Panel';
+  }
+  
+  // Fungsi logout
+  async function logout() {
+    const confirmed = await showCustomConfirm('Anda yakin ingin keluar dari akun ini?', 'Konfirmasi Logout', 'fas fa-sign-out-alt');
+    
+    if (confirmed) {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('loggedInUser');
+        window.location.href = 'login.html';
+    }
+  }
+
+  /* --- LOGIC WAKTU SAAT INI (TAMBAHAN BARU) --- */
+  function updateTime() {
+      const timeElement = document.getElementById('current-time');
+      const now = new Date();
+      
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      
+      timeElement.innerHTML = `<i class="far fa-clock"></i> ${hours}:${minutes}:${seconds}`;
+  }
+  
+  /* --- LOGIC KECEPATAN JARINGAN (TAMBAHAN BARU) --- */
+  function updateNetworkSpeed() {
+      const networkElement = document.getElementById('network-speed');
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      
+      if (connection && connection.downlink !== undefined && connection.downlink !== null) {
+          const downlink = connection.downlink.toFixed(1);
+          networkElement.innerHTML = `<i class="fas fa-signal"></i> ${downlink} Mbps`;
+      } else {
+          networkElement.innerHTML = '<i class="fas fa-signal"></i> N/A';
+      }
+  }
+  /* --- AKHIR LOGIC WAKTU & JARINGAN --- */
+
+  /* --- LOGIC COUNTDOWN ULANG TAHUN (TAMBAHAN BARU) --- */
+  function updateCountdown() {
+      const countdownElement = document.getElementById('birthday-countdown');
+      const now = new Date();
+      const diff = BIRTHDAY_TARGET_DATE.getTime() - now.getTime();
+      
+      if (diff <= 0) {
+          // Ulang tahun sudah tiba atau terlewati
+          // Hitung hari yang sudah berlalu atau hari ini
+          const days = Math.ceil(Math.abs(diff) / (1000 * 60 * 60 * 24));
+          
+          countdownElement.innerHTML = `<i class="fas fa-birthday-cake"></i> **SELAMAT ULANG TAHUN!**`;
+          countdownElement.style.borderColor = 'var(--utility-color)';
+          countdownElement.style.backgroundColor = 'rgba(255, 170, 0, 0.2)'; 
+          
+          // Tampilkan notifikasi hanya sekali per sesi (atau biarkan terus muncul jika hari H)
+          if (localStorage.getItem(BIRTHDAY_KEY) !== BIRTHDAY_TARGET_DATE.toDateString()) {
+              setTimeout(() => {
+                  showCustomAlert("🎉 Selamat Ulang Tahun! 🎉\nSemoga hari Anda menyenangkan!", "Ulang Tahun!", "fas fa-birthday-cake");
+                  localStorage.setItem(BIRTHDAY_KEY, BIRTHDAY_TARGET_DATE.toDateString()); 
+              }, 1000); 
+          }
+          
+      } else {
+          // Hitungan mundur
+          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          countdownElement.innerHTML = `<i class="fas fa-calendar-alt"></i> Ulang Tahun: ${days} hari lagi!`;
+      }
+  }
+  /* --- AKHIR LOGIC COUNTDOWN ULANG TAHUN --- */
+
+
+  /* --- LOGIC STATUS BATERAI --- */
+  if ('getBattery' in navigator) {
+      navigator.getBattery().then(function(battery) {
+          updateBatteryStatus(battery);
+
+          battery.addEventListener('levelchange', function() {
+              updateBatteryStatus(battery);
+          });
+          battery.addEventListener('chargingchange', function() {
+              updateBatteryStatus(battery);
+          });
+      });
+  } else {
+      const batteryStatusElement = document.querySelector('.battery-status');
+      if (batteryStatusElement) {
+          batteryStatusElement.style.display = 'none';
+      }
+  }
+
+  function updateBatteryStatus(battery) {
+      const percentageElement = document.getElementById('battery-percentage');
+      const fillElement = document.getElementById('battery-fill');
+      const boltElement = document.getElementById('charging-bolt');
+      
+      const level = Math.round(battery.level * 100);
+      const isCharging = battery.charging;
+
+      percentageElement.innerText = `${level}%`;
+
+      fillElement.style.width = `${level}%`;
+
+      if (isCharging) {
+          boltElement.classList.add('active');
+          fillElement.style.backgroundColor = 'var(--battery-full)';
+      } else {
+          boltElement.classList.remove('active');
+          if (level > 40) {
+              fillElement.style.backgroundColor = 'var(--battery-full)';
+          } else if (level > 15) {
+              fillElement.style.backgroundColor = 'var(--battery-med)';
+          } else {
+              fillElement.style.backgroundColor = 'var(--battery-low)';
+          }
+      }
+  }
+  
+  /* --- LOGIC DETEKSI PERANGKAT --- */
+  function detectDeviceInfo() {
+      const osNameElement = document.getElementById('os-name-sidebar');
+      const ramInfoElement = document.getElementById('ram-info-sidebar');
+      const hpSeriesElement = document.getElementById('hp-series-sidebar');
+      const userAgent = navigator.userAgent;
+      let osName = 'Unknown';
+      
+      if (/android/i.test(userAgent)) {
+          osName = 'Android OS';
+      } else if (/ipad|iphone|ipod/i.test(userAgent)) {
+          osName = 'iOS (Apple)';
+      } else if (/windows/i.test(userAgent)) {
+          osName = 'Windows OS';
+      } else if (/macintosh|mac os x/i.test(userAgent)) {
+          osName = 'macOS (Apple)';
+      } else if (/linux/i.test(userAgent)) {
+          osName = 'Linux/ChromeOS';
+      }
+      
+      if (osNameElement) osNameElement.innerText = osName;
+
+      if ('deviceMemory' in navigator) {
+          const ram = navigator.deviceMemory; 
+          if (ramInfoElement) ramInfoElement.innerText = `${ram} GB (Perkiraan)`;
+      } else {
+          if (ramInfoElement) ramInfoElement.innerText = 'Tidak Terdeteksi';
+      }
+
+      let hpSeries = 'Tidak Terdeteksi';
+      
+      if (/Android/i.test(userAgent)) {
+          const match = userAgent.match(/Android[^;]+; ([^)]+)/);
+          if (match && match[1]) {
+             hpSeries = match[1].split('Build/')[0].trim();
+             if (hpSeries.toUpperCase().includes('X669C')) {
+                hpSeries = 'Infinix X669C';
+             }
+          } else {
+             hpSeries = 'Android Phone';
+          }
+      } else if (/iPhone|iPad|iPod/.test(userAgent)) {
+          if (/iPhone/.test(userAgent)) {
+              hpSeries = 'iPhone (Apple)';
+          } else if (/iPad/.test(userAgent)) {
+              hpSeries = 'iPad (Apple)';
+          }
+      } else if (/Windows Phone/i.test(userAgent)) {
+          hpSeries = 'Windows Phone';
+      }
+      
+      if (hpSeriesElement) hpSeriesElement.innerText = hpSeries;
+  }
+  
+  
+  // Panggil fungsi saat halaman dimuat
+  window.onload = function() {
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+          
+          loadSettings();
+          detectDeviceInfo();
+          
+          // Tampilkan Admin Menu jika Owner
+          if (loggedInUser === OWNER_USERNAME) {
+              adminMenuHeader.style.display = 'block';
+              adminLink.style.display = 'flex';
+          }
+          
+          // MENAMPILKAN USERNAME YANG LOGIN
+          const userElement = document.getElementById('logged-in-username');
+          if (userElement && loggedInUser) {
+              userElement.innerHTML = `<i class="fas fa-user-check"></i> Selamat Datang, ${loggedInUser}`;
+          }
+          
+          if ('getBattery' in navigator) {
+              navigator.getBattery().then(function(battery) {
+                  updateBatteryStatus(battery);
+                  battery.addEventListener('levelchange', function() { updateBatteryStatus(battery); });
+                  battery.addEventListener('chargingchange', function() { updateBatteryStatus(battery); });
+              });
+          }
+          
+          updateTime();
+          setInterval(updateTime, 1000); 
+          
+          updateNetworkSpeed(); 
+          
+          updateCountdown(); // Panggil fungsi countdown
+          
+          goToStep1(); 
+      }
+  };
+</script>
+
+</body>
+</html>

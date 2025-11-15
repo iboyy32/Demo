@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="panel-title">Login Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Styling Dasar Diambil dari index.html */
+    :root {
+      --blur-strength: 15px;
+      --card-bg: rgba(25, 25, 40, 0.6);
+      --border-color: rgba(255, 255, 255, 0.15);
+      --text-primary: #ffffff;
+      --text-secondary: #c0c0d0;
+      --accent-primary: #6a11cb;
+      --accent-secondary: #2575fc;
+      --error-bg: rgba(255, 50, 50, 0.2);
+      --error-border: #ff6b6b;
+      --error-text: #ffadad;
+      /* BARU: Variabel untuk Sukses */
+      --success-bg: rgba(50, 255, 50, 0.2);
+      --success-border: #6bff6b;
+      --success-text: #adffad;
+    }
+
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .video-background video {
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: cover;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: var(--text-primary);
+      overflow: hidden;
+      padding-bottom: 0 !important;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(var(--blur-strength));
+      -webkit-backdrop-filter: blur(var(--blur-strength));
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+      width: 90%;
+      box-sizing: border-box;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      animation: fadeInCard 0.8s ease-out forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    @keyframes fadeInCard {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    p.sub {
+      margin: 0 0 30px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    label {
+      text-align: left;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-secondary);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(37, 117, 252, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      color: var(--text-primary);
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    button:hover {
+      transform: scale(1.02);
+      box-shadow: 0 5px 20px rgba(69, 97, 252, 0.3);
+    }
+
+    .error-box {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    /* BARU: Styling untuk Sukses Box */
+    .success-box {
+        background: var(--success-bg);
+        border: 1px solid var(--success-border);
+        color: var(--success-text);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-top-color: var(--text-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    /* Logo style for login */
+    .login-logo {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        background: var(--card-bg);
+        border: 2px solid var(--accent-secondary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .login-logo i {
+        font-size: 40px;
+        color: var(--accent-secondary);
+    }
+    
+    /* Tombol Toggle Login/Register */
+    .toggle-form-link {
+        margin-top: 15px;
+        display: block;
+        font-size: 14px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    .toggle-form-link:hover {
+        color: var(--accent-secondary);
+    }
+    
+    /* GAYA BARU UNTUK INPUT GROUP NOMOR WHATSAPP */
+    .wa-input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .wa-input-group select {
+        width: 35%; /* Lebih kecil untuk kode negara */
+        padding-right: 5px;
+        margin-bottom: 0;
+        /* Hapus default arrow agar sesuai dengan input */
+        appearance: none;
+        background-image: none;
+    }
+    .wa-input-group input {
+        width: 65%;
+        margin-bottom: 0;
+    }
+    /* Akhir GAYA BARU */
+  </style>
+</head>
+<body>
+
+<div class="video-background">
+  <video autoplay muted loop playsinline poster="iboy.jpg"> 
+    <source src="iboyy.mp4" type="video/mp4">
+    Browser Anda tidak mendukung tag video.
+  </video>
+</div>
+
+<div class="card">
+    <div class="login-logo">
+        <i id="logo-icon" class="fas fa-lock"></i>
+    </div>
+    <h2 id="card-header">Kunci Akses Panel</h2>
+    <p class="sub" id="card-subheader">Masukkan kredensial yang benar untuk melanjutkan.</p>
+
+    <div id="error-message" class="error-box hidden"></div>
+    
+    <div id="success-message" class="success-box hidden"></div> 
+
+    <form id="login-form">
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" placeholder="Masukkan Username" required>
+
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Masukkan Sandi" required>
+
+        <button type="submit" id="login-button">
+            <i class="fas fa-sign-in-alt"></i> Masuk
+        </button>
+        
+        <span class="toggle-form-link" onclick="toggleForm('register')">
+            Belum punya akun? **Daftar Disini**
+        </span>
+    </form>
+    
+    <form id="register-form" class="hidden">
+        <label for="register-username">Username</label>
+        <input type="text" id="register-user" placeholder="Buat Username Anda" required>
+
+        <label for="register-password">Password</label>
+        <input type="password" id="register-password" placeholder="Buat Sandi" required>
+        
+        <label for="whatsapp-number">Nomor WhatsApp Aktif</label>
+        <div class="wa-input-group">
+            <select id="country-code" required></select>
+            <input type="text" id="whatsapp-number" placeholder="Nomor Telepon (812xxxx)" required pattern="[0-9]{5,15}" title="Hanya angka, minimal 5 digit.">
+        </div>
+        
+        <label for="register-confirm-password">Konfirmasi Password</label>
+        <input type="password" id="register-confirm-password" placeholder="Ulangi Sandi" required>
+
+        <button type="submit" id="register-button">
+            <i class="fas fa-user-plus"></i> Daftar Akun
+        </button>
+        
+        <span class="toggle-form-link" onclick="toggleForm('login')">
+            Sudah punya akun? **Login Disini**
+        </span>
+    </form>
+</div>
+
+<script>
+    // **KONFIGURASI AKUN OWNER**
+    const OWNER_USERNAME = "iboy"; 
+    const OWNER_PASSWORD = "iboyy12"; 
+    
+    // Key untuk menyimpan daftar pengguna
+    const USERS_KEY = 'panelUsers';
+    // Key untuk menyimpan daftar username yang dibanned
+    const BANNED_USERS_KEY = 'bannedUsers';
+
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const loginButton = document.getElementById('login-button');
+    const registerButton = document.getElementById('register-button');
+    const errorMessage = document.getElementById('error-message');
+    // BARU
+    const successMessage = document.getElementById('success-message'); 
+    const panelTitle = document.getElementById('panel-title');
+    const cardHeader = document.getElementById('card-header');
+    const cardSubheader = document.getElementById('card-subheader');
+    const logoIcon = document.getElementById('logo-icon');
+    const countryCodeSelect = document.getElementById('country-code');
+    const whatsappNumberInput = document.getElementById('whatsapp-number');
+    const registerUserInput = document.getElementById('register-user');
+    
+    // Data Kode Negara (Sample)
+    const countryCodes = [
+        { name: "", code: "+62" },
+        { name: "", code: "+60" },
+        { name: "", code: "+65" },
+        { name: "", code: "+66" },
+        { name: "", code: "+1" },
+        { name: "", code: "+44" },
+        { name: "", code: "+61" },
+        { name: "", code: "+81" },
+        { name: " ", code: "+82" },
+        { name: "", code: "+86" },
+        { name: " ", code: "+852" },
+        { name: "", code: "+886" },
+        // Anda bisa menambahkan lebih banyak negara di sini
+    ];
+
+    // --- Fungsi Utilitas ---
+    function showError(message) {
+      errorMessage.innerText = message;
+      errorMessage.classList.remove('hidden');
+      successMessage.classList.add('hidden'); // BARU: Sembunyikan pesan sukses
+    }
+    
+    function hideError() {
+      errorMessage.classList.add('hidden');
+      successMessage.classList.add('hidden'); // BARU: Sembunyikan pesan sukses
+    }
+    
+    // BARU: Fungsi untuk menampilkan pesan sukses kustom
+    function showSuccess(message) {
+      successMessage.innerText = message;
+      successMessage.classList.remove('hidden');
+      errorMessage.classList.add('hidden'); // Sembunyikan pesan error
+    }
+
+    function setButtonLoading(button, isLoading, defaultIcon, defaultText) {
+        if (isLoading) {
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner"></span> Memverifikasi...';
+        } else {
+            button.disabled = false;
+            button.innerHTML = `<i class="fas fa-${defaultIcon}"></i> ${defaultText}`;
+        }
+    }
+    
+    // --- Ban Logic ---
+    function getBannedUsers() {
+        const banned = localStorage.getItem(BANNED_USERS_KEY);
+        // Tambahkan beberapa contoh username yang di-ban secara default
+        const defaultBans = ['hacker', 'admin1', 'testuser']; 
+        return banned ? JSON.parse(banned) : defaultBans;
+    }
+    
+    function isUserBanned(username) {
+        const bannedUsers = getBannedUsers();
+        return bannedUsers.includes(username.toLowerCase());
+    }
+
+    // --- User Data Management ---
+    function getAllUsers() {
+        const users = localStorage.getItem(USERS_KEY);
+        // Tambahkan akun owner ke daftar pengguna yang terdaftar secara default
+        const defaultUsers = {
+            [OWNER_USERNAME]: { password: OWNER_PASSWORD }
+        };
+        return users ? { ...defaultUsers, ...JSON.parse(users) } : defaultUsers;
+    }
+    
+    function saveUser(username, password, whatsappNumber) {
+        const users = getAllUsers();
+        users[username] = { 
+            password: password, 
+            whatsapp: whatsappNumber // Simpan Nomor WA lengkap
+        };
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+    
+    // --- Form Toggle ---
+    function toggleForm(type) {
+        hideError();
+        if (type === 'register') {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            panelTitle.innerText = 'Buat Akun Panel';
+            cardHeader.innerText = 'Buat Akun Panel';
+            cardSubheader.innerText = 'Daftar dan lengkapi detail Anda.';
+            logoIcon.className = 'fas fa-user-plus';
+            // Pastikan kode negara dimuat saat register
+            populateCountryCodes();
+        } else {
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            panelTitle.innerText = 'Login Panel';
+            cardHeader.innerText = 'Kunci Akses Panel';
+            cardSubheader.innerText = 'Masukkan kredensial yang benar untuk melanjutkan.';
+            logoIcon.className = 'fas fa-lock';
+        }
+    }
+    
+    // --- Populate Country Codes ---
+    function populateCountryCodes() {
+        if (countryCodeSelect.options.length > 0) return; // Hindari duplikasi
+
+        countryCodes.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.code;
+            option.textContent = `${country.name} (${country.code})`;
+            countryCodeSelect.appendChild(option);
+        });
+        
+        // Pilih Indonesia sebagai default
+        countryCodeSelect.value = "+62";
+    }
+
+    // --- Login Logic ---
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        hideError();
+        setButtonLoading(loginButton, true, 'sign-in-alt', 'Masuk');
+
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+        const users = getAllUsers();
+
+        setTimeout(() => {
+            if (isUserBanned(username)) {
+                 showError(`Akses ditolak. Username ${username} telah dibanned permanen.`);
+                 setButtonLoading(loginButton, false, 'sign-in-alt', 'Masuk');
+                 return;
+            }
+
+            if (users[username] && users[username].password === password) {
+                // Berhasil: Simpan status login di localStorage dan redirect
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('loggedInUser', username); // **SIMPAN USERNAME**
+                window.location.href = 'index.html';
+            } else {
+                // Gagal: Tampilkan pesan error
+                showError('Username atau Sandi salah. Coba lagi.');
+                setButtonLoading(loginButton, false, 'sign-in-alt', 'Masuk');
+            }
+        }, 800); 
+    });
+    
+    // --- Register Logic ---
+    registerForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        hideError();
+        setButtonLoading(registerButton, true, 'user-plus', 'Daftar Akun');
+
+        const username = registerUserInput.value.trim();
+        const password = document.getElementById('register-password').value.trim();
+        const confirmPassword = document.getElementById('register-confirm-password').value.trim();
+        const countryCode = countryCodeSelect.value;
+        const rawWaNumber = whatsappNumberInput.value.trim();
+        const whatsappNumber = countryCode + rawWaNumber;
+        
+        const users = getAllUsers();
+
+        if (password !== confirmPassword) {
+            showError('Konfirmasi Password tidak cocok.');
+            setButtonLoading(registerButton, false, 'user-plus', 'Daftar Akun');
+            return;
+        }
+
+        // Validasi Username
+        if (username.length < 4) {
+            showError('Username minimal 4 karakter.');
+            setButtonLoading(registerButton, false, 'user-plus', 'Daftar Akun');
+            return;
+        }
+        
+        // Validasi Nomor WhatsApp (Hanya angka, minimal 5 digit)
+        const waPattern = /^[0-9]{5,15}$/; // Hanya validasi nomor teleponnya saja
+        if (!waPattern.test(rawWaNumber)) {
+            showError('Nomor WhatsApp wajib diisi dengan angka, minimal 5 digit setelah kode negara.');
+            setButtonLoading(registerButton, false, 'user-plus', 'Daftar Akun');
+            return;
+        }
+        
+        if (isUserBanned(username)) {
+             showError(`Pendaftaran ditolak. Username ${username} telah dibanned permanen.`);
+             setButtonLoading(registerButton, false, 'user-plus', 'Daftar Akun');
+             return;
+        }
+        
+        if (users[username]) {
+            showError('Username sudah terdaftar. Silakan gunakan Username lain atau Login.');
+            setButtonLoading(registerButton, false, 'user-plus', 'Daftar Akun');
+            return;
+        }
+
+        setTimeout(() => {
+            // Lakukan pendaftaran
+            saveUser(username, password, whatsappNumber);
+            
+            // Langsung login setelah daftar berhasil
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('loggedInUser', username);
+            
+            // BARU: Ganti alert() dengan notifikasi kustom dan redirect dengan delay
+            showSuccess(`Pendaftaran berhasil! Username Anda: ${username}. Anda akan dialihkan ke halaman utama.`);
+            setButtonLoading(registerButton, false, 'user-plus', 'Daftar Akun');
+
+            // Redirect setelah 2 detik
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000); 
+            
+        }, 800); 
+    });
+    
+    // Panggil saat dimuat untuk mengisi kode negara
+    window.onload = populateCountryCodes;
+
+</script>
+
+</body>
+</html>
